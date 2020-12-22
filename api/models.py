@@ -3,11 +3,9 @@ from django.db import models
 
 class Dog(models.Model):
     """Модель  Собаки
-    
     name - поле с кличкой собаки
     sex - поле с выбором пола собаки
     coat_color - поле с цветом шерсти собаки
-    eye_color - поле с цветом глаз собаки
     behavior - после с выбором поведения собаки
     breed - поле с породой собаки
     age - поле с возрастом собаки
@@ -41,11 +39,8 @@ class Dog(models.Model):
     age = models.PositiveIntegerField()
     pub_date = models.DateTimeField(auto_now_add=True)
 
-
-
     class Meta:
         ordering = ('-pub_date',)
-
 
 
 class Breed(models.Model):

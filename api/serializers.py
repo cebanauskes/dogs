@@ -37,7 +37,6 @@ class DogSerializer(serializers.ModelSerializer):
         choices=Dog.BEHAVIOR_CHOICES, required=False,
     )
 
-
     class Meta:
         model = Dog
         fields = (
