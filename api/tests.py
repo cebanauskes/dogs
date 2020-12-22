@@ -1,12 +1,13 @@
 import json
 
-from django.test import TestCase, Client
+from django.test import TestCase
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from .models import Dog, Breed
 from .serializers import DogSerializer, BreedSerializer
 
-client = Client()
+client = APIClient()
 
 class TestGetDogs(TestCase):
     """ Тестирует получение данных одной/всех собак """
