@@ -17,7 +17,7 @@ class TestGetDogs(TestCase):
         self.dog1 = Dog.objects.create(
             name='Romulus', sex='MALE', coat_color='brown',
             behavior='CALM', breed=self.breed1, age=2)
-        Dog.objects.create(
+        self.dog2 = Dog.objects.create(
             name='Anka', sex='MALE', coat_color='black',
             behavior='AGRESSIVE', breed=self.breed1, age=2)
 
@@ -35,8 +35,8 @@ class TestGetDogs(TestCase):
         по правильной ссылке
         
         """
-        response = client.get('/api/v1/dogs/1/')
-        dog = Dog.objects.get(id=1)
+        response = client.get(f'/api/v1/dogs/{self.dog1.id}/')
+        dog = Dog.objects.get(id=self.dog1.id)
         serializer = DogSerializer(dog)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -47,7 +47,7 @@ class TestGetDogs(TestCase):
         по неправильной ссылке
         
         """
-        response = client.get('/api/v1/dogs/10/')
+        response = client.get(f'/api/v1/dogs/{self.dog1.id + 1000000}/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
     def test_search_dogs(self):
@@ -145,7 +145,7 @@ class TestUpdateDog(TestCase):
     def test_valid_update_dog(self):
         """Тестирует обновление данных собаки по правильным исходным"""
         response = client.put(
-            '/api/v1/dogs/1/',
+            f'/api/v1/dogs/{self.dog1.id}/',
             data=json.dumps(self.valid_dog),
             content_type='application/json'
         )
@@ -154,7 +154,7 @@ class TestUpdateDog(TestCase):
     def test_invalid_update_dog(self):
         """Тестирует обновление данных собаки по неправильным исходным"""
         response = client.put(
-            '/api/v1/dogs/2/',
+            f'/api/v1/dogs/{self.dog2.id}/',
             data=json.dumps(self.invalid_dog),
             content_type='application/json'
         )
@@ -172,7 +172,7 @@ class TestDeleteDog(TestCase):
             behavior='CALM', breed=self.breed, age=2)
     
     def test_delete_dog(self):
-        response = client.delete('/api/v1/dogs/1/')
+        response = client.delete(f'/api/v1/dogs/{self.dog1.id}/')
         count = Dog.objects.all().count()
         self.assertEqual(0, count)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -183,9 +183,9 @@ class TestGetBreed(TestCase):
     """Тестирует получение данных одной/нескольких пород"""
 
     def setUp(self):
-        Breed.objects.create(
+        self.breed1 = Breed.objects.create(
             title='Лабрадор', description='Обычный')
-        Breed.objects.create(
+        self.breed2 = Breed.objects.create(
             title='Дворняга', description='Великая')
 
     def test_get_breeds(self):
@@ -200,8 +200,8 @@ class TestGetBreed(TestCase):
         """
         Тестирует получение данных одной породы
         по правильным исходным данным"""
-        response = client.get('/api/v1/breeds/1/')
-        breed = Breed.objects.get(id=1)
+        response = client.get(f'/api/v1/breeds/{self.breed1.id}/')
+        breed = Breed.objects.get(id=self.breed1.id)
         serializer = BreedSerializer(breed)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -211,7 +211,7 @@ class TestGetBreed(TestCase):
         Тестирует получение данных одной собаки
         по неправильным исходным (имя)
         """
-        response = client.get('/api/v1/breeds/10/')
+        response = client.get(f'/api/v1/breeds/{self.breed1.id + 1000}/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     
@@ -250,9 +250,9 @@ class TestUpdateBreed(TestCase):
     """Тестирует обнновление данных породы"""
 
     def setUp(self):
-        Breed.objects.create(
+        self.breed1 = Breed.objects.create(
             title='Лабрадор', description='Обычный')
-        Breed.objects.create(
+        self.breed2 = Breed.objects.create(
             title='Дворняга', description='Великая')
         self.valid_breed = {
             'title': 'Rome',
@@ -267,7 +267,7 @@ class TestUpdateBreed(TestCase):
         """Тестирует обновление данных породы
         с правильными исходными"""
         response = client.put(
-            '/api/v1/breeds/1/',
+            f'/api/v1/breeds/{self.breed1.id}/',
             data=json.dumps(self.valid_breed),
             content_type='application/json'
         )
@@ -277,7 +277,7 @@ class TestUpdateBreed(TestCase):
         """Тестирует обновленме данных породы
         с неправильными исходными (название)"""
         response = client.put(
-            '/api/v1/breeds/1/',
+            f'/api/v1/breeds/{self.breed1.id}/',
             data=json.dumps(self.invalid_breed),
             content_type='application/json',
         )
@@ -292,7 +292,7 @@ class TestDeteteBreed(TestCase):
     
     def test_delete_breed(self):
         """Тестирует удаление данных породы """
-        response = client.delete('/api/v1/breeds/1/')
+        response = client.delete(f'/api/v1/breeds/{self.breed.id}/')
         count = Breed.objects.all().count()
         self.assertEqual(0, count)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
